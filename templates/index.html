@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Master | Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <div class="app-container">
+        <!-- Dashboard Top Header -->
+        <header class="app-header">
+            <div class="brand">
+                <div class="logo-icon">✓</div>
+                <div>
+                    <h1>Task Master</h1>
+                    <p class="subtitle">Personal Workspace & Task Manager</p>
+                </div>
+            </div>
+            <div class="header-stats">
+                <span class="stat-badge">
+                    Today: <strong>{{ today_date }}</strong>
+                </span>
+            </div>
+        </header>
+
+        <!-- 📊 Quick Dashboard Stats -->
+        <section class="stats-grid">
+            <div class="stat-card">
+                <span class="stat-label">Total Tasks</span>
+                <span class="stat-value">{{ tasks|length }}</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-label">Pending</span>
+                <span class="stat-value text-blue">{{ tasks|rejectattr('completed')|list|length }}</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-label">Completed</span>
+                <span class="stat-value text-green">{{ tasks|selectattr('completed')|list|length }}</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-label">High Priority</span>
+                <span class="stat-value text-red">{{ tasks|selectattr('priority', 'equalto', 'High')|list|length }}</span>
+            </div>
+        </section>
+
+        <!-- Main Content Layout -->
+        <main class="dashboard-content">
+
+            <!-- Quick Add Task Card -->
+            <section class="card form-card">
+                <h2>➕ Add New Task</h2>
+                <form action="{{ url_for('add_task') }}" method="POST" class="task-form">
+                    <div class="form-grid">
+                        <div class="form-group flex-2">
+                            <label for="title">Title</label>
+                            <input type="text" id="title" name="title" placeholder="What needs to be done?" required autocomplete="off">
+                        </div>
+
+                        <div class="form-group flex-2">
+                            <label for="description">Description / Notes</label>
+                            <input type="text" id="description" name="description" placeholder="Add extra details..." autocomplete="off">
+                        </div>
+
+                        <div class="form-group flex-1">
+                            <label for="due_date">Due Date</label>
+                            <input type="date" id="due_date" name="due_date">
+                        </div>
+
+                        <div class="form-group flex-1">
+                            <label for="priority">Priority</label>
+                            <select id="priority" name="priority">
+                                <option value="Low">🟢 Low</option>
+                                <option value="Medium" selected>🟡 Medium</option>
+                                <option value="High">🔴 High</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group btn-group">
+                            <button type="submit" class="btn btn-primary">Add Card</button>
+                        </div>
+                    </div>
+                </form>
+            </section>
+
+            <!-- 🔍 Search & Filter Controls Bar -->
+            <section class="card filter-card">
+                <div class="filter-grid">
+                    <div class="form-group flex-3">
+                        <input type="text" id="searchInput" placeholder="🔍 Search tasks by title or description..." onkeyup="filterTasks()">
+                    </div>
+                    <div class="form-group flex-1">
+                        <select id="priorityFilter" onchange="filterTasks()">
+                            <option value="ALL">All Priorities</option>
+                            <option value="High">🔴 High Priority</option>
+                            <option value="Medium">🟡 Medium Priority</option>
+                            <option value="Low">🟢 Low Priority</option>
+                        </select>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Board Columns Grid -->
+            <div class="board-columns">
+
+                <!-- Column 1: Pending Tasks -->
+                <section class="board-column">
+                    <div class="column-header">
+                        <div class="column-title">
+                            <span class="col-icon">📥</span>
+                            <h2>To Do / Active</h2>
+                        </div>
+                        <span class="task-count">{{ tasks|rejectattr('completed')|list|length }}</span>
+                    </div>
+
+                    <div class="task-list" id="pendingList">
+                        {% set pending_tasks = tasks|rejectattr('completed')|list %}
+                        {% if pending_tasks %}
+                            {% for task in pending_tasks %}
+                                <div class="task-card" data-title="{{ task.title|lower }} {{ task.description|lower if task.description else '' }}" data-priority="{{ task.priority }}">
+                                    <div class="card-header">
+                                        <div class="badge-group">
+                                            <span class="badge priority-{{ task.priority|lower }}">
+                                                {{ task.priority }}
+                                            </span>
+                                            {% if task.due_date %}
+                                                {% set days_left = (task.due_date - today_date_obj).days %}
+                                                {% if days_left < 0 %}
+                                                    <span class="badge badge-overdue">⚠️ Overdue ({{ task.due_date.strftime('%b %d') }})</span>
+                                                {% elif days_left == 0 %}
+                                                    <span class="badge badge-today">📅 Due Today</span>
+                                                {% else %}
+                                                    <span class="badge badge-due">🗓️ {{ task.due_date.strftime('%b %d') }}</span>
+                                                {% endif %}
+                                            {% endif %}
+                                        </div>
+
+                                        <div class="task-actions">
+                                            <button
+                                                type="button"
+                                                class="btn-icon btn-edit"
+                                                onclick="openEditModal('{{ task.id }}', '{{ task.title }}', '{{ task.description if task.description else '' }}', '{{ task.priority }}', '{{ task.due_date if task.due_date else '' }}')"
+                                                title="Edit Task"
+                                            >✏️</button>
+
+                                            <form action="{{ url_for('delete_task', task_id=task.id) }}" method="POST" class="inline-form">
+                                                <button type="submit" class="btn-icon btn-delete" title="Delete Task">&times;</button>
+                                            </form>
+                                        </div>
+                                    </div>
+
+                                    <div class="card-body">
+                                        <h3 class="task-title">{{ task.title }}</h3>
+                                        {% if task.description %}
+                                            <p class="task-desc">{{ task.description }}</p>
+                                        {% endif %}
+                                    </div>
+
+                                    <div class="card-footer">
+                                        <form action="{{ url_for('toggle_task', task_id=task.id) }}" method="POST" class="full-width">
+                                            <button type="submit" class="btn btn-status btn-complete">Mark Complete ✓</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="empty-state">
+                                <p>🎉 All caught up! No active tasks today.</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </section>
+
+                <!-- Column 2: Completed Tasks -->
+                <section class="board-column column-done">
+                    <div class="column-header">
+                        <div class="column-title">
+                            <span class="col-icon">✅</span>
+                            <h2>Completed</h2>
+                        </div>
+                        <span class="task-count done-count">{{ tasks|selectattr('completed')|list|length }}</span>
+                    </div>
+
+                    <div class="task-list" id="completedList">
+                        {% set completed_tasks = tasks|selectattr('completed')|list %}
+                        {% if completed_tasks %}
+                            {% for task in completed_tasks %}
+                                <div class="task-card completed-card" data-title="{{ task.title|lower }} {{ task.description|lower if task.description else '' }}" data-priority="{{ task.priority }}">
+                                    <div class="card-header">
+                                        <span class="badge badge-done">DONE</span>
+                                        <div class="task-actions">
+                                            <form action="{{ url_for('delete_task', task_id=task.id) }}" method="POST" class="inline-form">
+                                                <button type="submit" class="btn-icon btn-delete" title="Delete Task">&times;</button>
+                                            </form>
+                                        </div>
+                                    </div>
+
+                                    <div class="card-body">
+                                        <h3 class="task-title crossed">{{ task.title }}</h3>
+                                        {% if task.description %}
+                                            <p class="task-desc crossed">{{ task.description }}</p>
+                                        {% endif %}
+                                    </div>
+
+                                    <div class="card-footer">
+                                        <form action="{{ url_for('toggle_task', task_id=task.id) }}" method="POST" class="full-width">
+                                            <button type="submit" class="btn btn-status btn-undo">Undo ↩️</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="empty-state">
+                                <p>No completed tasks yet.</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </section>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- Edit Task Modal Popup -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>📝 Edit Task</h3>
+                <span class="close-btn" onclick="closeEditModal()">&times;</span>
+            </div>
+
+            <form id="editForm" method="POST" action="">
+                <div class="form-group">
+                    <label for="edit_title">Title</label>
+                    <input type="text" id="edit_title" name="title" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="edit_description">Description / Notes</label>
+                    <textarea id="edit_description" name="description" rows="3"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="edit_due_date">Due Date</label>
+                    <input type="date" id="edit_due_date" name="due_date">
+                </div>
+
+                <div class="form-group">
+                    <label for="edit_priority">Priority</label>
+                    <select id="edit_priority" name="priority">
+                        <option value="Low">🟢 Low</option>
+                        <option value="Medium">🟡 Medium</option>
+                        <option value="High">🔴 High</option>
+                    </select>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeEditModal()">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,634 @@
+/* =========================================================
+   Task Master - Modern Refined Dashboard Stylesheet
+   ========================================================= */
+
+/* Reset & Fonts */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+:root {
+    --bg-main: #f8fafc;
+    --bg-header: #0f172a;
+    --card-bg: #ffffff;
+    --column-bg: #f1f5f9;
+    --text-main: #0f172a;
+    --text-muted: #64748b;
+    --border-color: #e2e8f0;
+    --primary-blue: #2563eb;
+    --primary-hover: #1d4ed8;
+    --shadow-sm: 0 1px 3px rgba(15, 23, 42, 0.06), 0 1px 2px rgba(15, 23, 42, 0.04);
+    --shadow-md: 0 4px 6px -1px rgba(15, 23, 42, 0.08), 0 2px 4px -2px rgba(15, 23, 42, 0.04);
+}
+
+body {
+    background-color: var(--bg-main);
+    color: var(--text-main);
+    min-height: 100vh;
+    padding: 24px 16px;
+    display: flex;
+    justify-content: center;
+    -webkit-font-smoothing: antialiased;
+}
+
+.app-container {
+    width: 100%;
+    max-width: 1140px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* ==========================================
+   Header Section
+   ========================================== */
+.app-header {
+    background: var(--bg-header);
+    border-radius: 14px;
+    padding: 18px 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 10px 20px -5px rgba(15, 23, 42, 0.3);
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.logo-icon {
+    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+    color: #ffffff;
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: grid;
+    place-items: center;
+    font-weight: 800;
+    font-size: 1.2rem;
+    box-shadow: 0 2px 8px rgba(37, 99, 235, 0.4);
+}
+
+.app-header h1 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #f8fafc;
+    letter-spacing: -0.02em;
+}
+
+.subtitle {
+    color: #94a3b8;
+    font-size: 0.825rem;
+    margin-top: 1px;
+}
+
+.stat-badge {
+    background: rgba(255, 255, 255, 0.08);
+    color: #e2e8f0;
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 0.825rem;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(4px);
+}
+
+/* ==========================================
+   Add Task Quick Form Card
+   ========================================== */
+.card {
+    background: var(--card-bg);
+    border-radius: 14px;
+    padding: 20px 24px;
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-sm);
+}
+
+.card h2 {
+    font-size: 0.95rem;
+    margin-bottom: 14px;
+    color: #334155;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+}
+
+.task-form .form-grid {
+    display: flex;
+    gap: 12px;
+    align-items: flex-end;
+    flex-wrap: wrap;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.form-group.flex-1 { flex: 1; min-width: 130px; }
+.form-group.flex-2 { flex: 2; min-width: 220px; }
+.form-group.flex-3 { flex: 3; min-width: 260px; }
+.form-group.btn-group { flex: 0 0 auto; }
+
+.form-group label {
+    font-size: 0.775rem;
+    font-weight: 600;
+    color: #475569;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+input[type="text"], textarea, select {
+    height: 40px;
+    padding: 0 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    outline: none;
+    transition: all 0.15s ease;
+    background: #f8fafc;
+    color: var(--text-main);
+    width: 100%;
+}
+
+textarea {
+    height: auto;
+    padding: 10px 12px;
+}
+
+input[type="text"]:focus, textarea:focus, select:focus {
+    border-color: var(--primary-blue);
+    background: #ffffff;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+/* Base Buttons */
+.btn {
+    height: 40px;
+    padding: 0 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    font-size: 0.875rem;
+    transition: all 0.15s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+.btn-primary {
+    background: var(--primary-blue);
+    color: white;
+    box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2);
+}
+
+.btn-primary:hover {
+    background: var(--primary-hover);
+    box-shadow: 0 4px 8px rgba(37, 99, 235, 0.3);
+}
+
+.btn-secondary { background: #e2e8f0; color: #475569; }
+.btn-secondary:hover { background: #cbd5e1; }
+
+/* ==========================================
+   Dashboard Board Columns Layout
+   ========================================== */
+.board-columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    align-items: start;
+}
+
+.board-column {
+    background: var(--column-bg);
+    border-radius: 14px;
+    padding: 16px;
+    border: 1px solid #e2e8f0;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-height: 420px;
+}
+
+.column-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 4px 10px 4px;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.column-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.column-header h2 {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin: 0;
+}
+
+.task-count {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--primary-blue);
+    background: #dbeafe;
+    padding: 2px 9px;
+    border-radius: 10px;
+}
+
+.task-count.done-count {
+    color: #047857;
+    background: #d1fae5;
+}
+
+/* ==========================================
+   Task Cards Design
+   ========================================== */
+.task-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.task-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 14px 16px;
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    transition: all 0.2s ease;
+}
+
+.task-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+    border-color: #cbd5e1;
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.badge {
+    font-size: 0.675rem;
+    padding: 3px 8px;
+    border-radius: 5px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.priority-high { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
+.priority-medium { background: #fffbe3; color: #b45309; border: 1px solid #fde68a; }
+.priority-low { background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; }
+.badge-done { background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; }
+
+.task-actions {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+}
+
+.btn-icon {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px 6px;
+    font-size: 0.85rem;
+    border-radius: 6px;
+    color: #64748b;
+    transition: all 0.15s;
+}
+
+.btn-icon:hover { background: #f1f5f9; color: #0f172a; }
+.btn-delete { font-size: 1.1rem; line-height: 1; }
+.btn-delete:hover { color: #ef4444; background: #fef2f2; }
+.btn-edit:hover { color: var(--primary-blue); background: #eff6ff; }
+
+.card-body {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.task-title {
+    font-size: 0.925rem;
+    font-weight: 600;
+    color: #0f172a;
+    line-height: 1.35;
+    word-break: break-word;
+}
+
+.task-desc {
+    font-size: 0.825rem;
+    color: #475569;
+    line-height: 1.45;
+    word-break: break-word;
+}
+
+.card-footer {
+    padding-top: 8px;
+    border-top: 1px solid #f1f5f9;
+}
+
+.full-width { width: 100%; }
+
+.btn-status {
+    height: 34px;
+    width: 100%;
+    font-size: 0.8rem;
+    border-radius: 6px;
+    font-weight: 600;
+}
+
+.btn-complete {
+    background: #f0fdf4;
+    color: #15803d;
+    border: 1px solid #bbf7d0;
+}
+
+.btn-complete:hover {
+    background: #dcfce7;
+    border-color: #86efac;
+}
+
+.btn-undo {
+    background: #ffffff;
+    color: #475569;
+    border: 1px solid #cbd5e1;
+}
+
+.btn-undo:hover {
+    background: #f8fafc;
+    color: #1e293b;
+}
+
+/* ==========================================
+   Completed Tasks Readability Improvements
+   ========================================== */
+.completed-card {
+    background: #f8fafc;
+    border-color: #e2e8f0;
+}
+
+/* Clearly readable crossed text with proper contrast */
+.crossed {
+    text-decoration: line-through;
+    color: #475569 !important;
+    opacity: 0.85;
+}
+
+.inline-form { display: inline; }
+
+.empty-state {
+    text-align: center;
+    padding: 36px 16px;
+    color: #94a3b8;
+    font-size: 0.875rem;
+}
+
+/* ==========================================
+   Modal Dialog Styling
+   ========================================== */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(15, 23, 42, 0.5);
+    backdrop-filter: blur(4px);
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+}
+
+.modal-content {
+    background: #ffffff;
+    width: 90%;
+    max-width: 460px;
+    padding: 24px;
+    border-radius: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h3 {
+    font-size: 1.05rem;
+    color: #0f172a;
+    font-weight: 700;
+}
+
+.close-btn {
+    font-size: 1.4rem;
+    cursor: pointer;
+    color: #94a3b8;
+    transition: color 0.15s;
+}
+
+.close-btn:hover { color: #0f172a; }
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+/* ==========================================
+   Responsive Scaling
+   ========================================== */
+@media (max-width: 768px) {
+    body { padding: 12px 8px; }
+
+    .board-columns {
+        grid-template-columns: 1fr;
+    }
+
+    .task-form .form-grid {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .form-group.btn-group {
+        margin-top: 4px;
+    }
+}
+
+/* Stats Summary Banner */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 16px;
+}
+
+.stat-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 16px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+}
+
+.stat-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #64748b;
+    text-transform: uppercase;
+}
+
+.stat-value {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #0f172a;
+}
+
+.text-blue { color: #2563eb; }
+.text-green { color: #059669; }
+.text-red { color: #dc2626; }
+
+/* Badges for Due Dates */
+.badge-group {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+.badge-overdue {
+    background: #fef2f2;
+    color: #dc2626;
+    border: 1px solid #fecaca;
+}
+
+.badge-today {
+    background: #fffbe3;
+    color: #b45309;
+    border: 1px solid #fde68a;
+}
+
+.badge-due {
+    background: #f1f5f9;
+    color: #475569;
+    border: 1px solid #cbd5e1;
+}
+
+/* Filter Card */
+.filter-card {
+    padding: 14px 20px;
+}
+
+.filter-grid {
+    display: flex;
+    gap: 12px;
+}
+
+/* =========================================================
+   Task Card Header & Badge Group Layout
+   ========================================================= */
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+}
+
+.badge-group {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+}
+
+/* =========================================================
+   Modern Due Date Badges Styling
+   ========================================================= */
+.badge-overdue {
+    background: #fef2f2;
+    color: #b91c1c;
+    border: 1px solid #fca5a5;
+    font-weight: 700;
+}
+
+.badge-today {
+    background: #fffbe3;
+    color: #b45309;
+    border: 1px solid #fde68a;
+    font-weight: 700;
+}
+
+.badge-due {
+    background: #f1f5f9;
+    color: #475569;
+    border: 1px solid #cbd5e1;
+    font-weight: 600;
+}
+
+/* Optional subtle icon spacing in badges */
+.badge-group .badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    line-height: 1;
+}
+
+/* =========================================================
+   Styled Date Input Form Field
+   ========================================================= */
+input[type="date"] {
+    height: 40px;
+    padding: 0 10px;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    color: var(--text-main);
+    background-color: #f8fafc;
+    outline: none;
+    font-family: inherit;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+input[type="date"]:focus {
+    border-color: #2563eb;
+    background-color: #ffffff;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+/* Customizing calendar picker icon accent */
+input[type="date"]::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    opacity: 0.6;
+    transition: opacity 0.15s ease;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator:hover {
+    opacity: 1;
+}
