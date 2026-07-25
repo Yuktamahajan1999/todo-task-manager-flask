@@ -20,12 +20,6 @@ The dashboard provides a clear overview of task progress and includes client-sid
 
 ---
 
-## 🚀 Live Demo
-
-🔗 **Coming Soon**
-
----
-
 ## 📸 Screenshots
 
 ### Task Master Dashboard
